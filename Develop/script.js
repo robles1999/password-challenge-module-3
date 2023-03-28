@@ -1,3 +1,5 @@
+"use strict";
+
 // Assignment Code
 var generateBtn = document.querySelector("#generate");
 
@@ -10,101 +12,116 @@ function writePassword() {
 }
 
 function generatePassword() {
-  const passwordCharsAll =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}\\|;:'\",.<>/?";
-
-  const charsUpperLower =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const charsUpperOnly = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const charsLowerOnly = "abcdefghijklmnopqrstuvwxyz";
-
-  const noNumbers =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-_=+[]{}\\|;:'\",.<>/?";
-
-  const noSpecialChar =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
   let newPassword = "";
 
-  // How many characters would you like your password to contain? ✅
-  let pwLength = prompt(
-    "How many characters would you like your password to contain?"
-  );
+  // !::::::::::: USER PROMPTS :::::::::::::
+  let pwLength;
 
-  // Min length of character need to be >= 8 characters. ✅
-  if (pwLength < 8 || pwLength > 128) {
-    pwLength = prompt(
-      `Password length must be between 8 and 128 characters long.`
+  function askPwLength() {
+    let length = prompt(
+      "How many characters would you like your password to contain?"
     );
+    // check if the length is between 8 - 128
+    checkLength(length);
+    return length;
   }
 
-// !::::::::::: USER PROMPTS :::::::::::::
-  
+  //? check min and max length
+  function checkLength(length) {
+    if (length < 8 || length > 128) {
+      alert(`Password length must be between 8 and 128 characters long.`);
+      askPwLength();
+    }
+    return;
+  }
+
+  // How many characters would you like your password to contain? ✅
+  pwLength = askPwLength();
+
   const specialChar = confirm(
     "Click OK to confirm including special characters."
   );
   const numChar = confirm("Click OK to confirm including numeric characters.");
   const lowerChar = confirm("Click OK to confirm including lower characters.");
   const upperChar = confirm("Click OK to confirm including upper characters.");
-  
+
+  if (!specialChar && !numChar && !lowerChar && !upperChar) {
+    alert("You must select at least one character type.");
+    writePassword();
+  }
+
   // !::::::: IF USER WANTS SPECIAL CHAR AND NUMBERS ::::::
+  const charsOnly = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const numbers = "0123456789";
+  const spChar = "!@#$%^&*()-_=+[]{}\\|;:'\",.<>/?";
+  let characters = "";
 
   if (specialChar || numChar) {
     if (specialChar && numChar) {
       for (let i = 0; i < pwLength; i++) {
+        console.log(specialChar, numChar, upperChar, lowerChar);
+        characters = charsOnly + numbers + spChar;
         // get a random character
-        const char =
-          passwordCharsAll[Math.floor(Math.random() * passwordCharsAll.length)];
-        // 
-        if (lowerChar && upperChar) {
-          newPassword += char;
-        } else if (upperChar) {
-          newPassword += char.toUpperCase();
-        } else {
-          newPassword += char.toLowerCase();
-        }
+        const char = characters[Math.floor(Math.random() * characters.length)];
+        newPassword += checkUpperLower(char, lowerChar, upperChar);
       }
     } else if (specialChar) {
       for (let i = 0; i < pwLength; i++) {
-        const char = noNumbers[Math.floor(Math.random() * noNumbers.length)];
-        if (lowerChar && upperChar) {
+        // special characters only
+        if (!upperChar && !lowerChar) {
+          characters = spChar;
+          const char =
+            characters[Math.floor(Math.random() * characters.length)];
           newPassword += char;
-        } else if (upperChar) {
-          newPassword += char.toUpperCase();
         } else {
-          newPassword += char.toLowerCase();
+          // special characters and letters
+          characters = charsOnly + spChar;
+          const char =
+            characters[Math.floor(Math.random() * characters.length)];
+          // check lower upper
+          newPassword += checkUpperLower(char, lowerChar, upperChar);
         }
       }
     } else if (numChar) {
-      for (let i = 0; i < pwLength; i++) {
-        const char =
-          noSpecialChar[Math.floor(Math.random() * noSpecialChar.length)];
-        if (lowerChar && upperChar) {
+      // only numbers
+      if (!upperChar && !lowerChar) {
+        for (let i = 0; i < pwLength; i++) {
+          console.log("made upper lower if of numbChar");
+          characters = numbers;
+          const char =
+            characters[Math.floor(Math.random() * characters.length)];
           newPassword += char;
-        } else if (upperChar) {
-          newPassword += char.toUpperCase();
-        } else {
-          newPassword += char.toLowerCase();
+        }
+      } else {
+        // numbers and letters
+        characters = charsOnly + numbers;
+        for (let i = 0; i < pwLength; i++) {
+          const char =
+            characters[Math.floor(Math.random() * characters.length)];
+          // check lower upper
+          newPassword += checkUpperLower(char, lowerChar, upperChar);
         }
       }
     }
     // !::::::: IF USER DON'T WANT SPECIAL CHAR AND NUMBERS ::::::
-  } else {
+  } else if (upperChar || lowerChar) {
     for (let i = 0; i < pwLength; i++) {
       const char = charsOnly[Math.floor(Math.random() * charsOnly.length)];
-      if (lowerChar || upperChar) {
-        if (lowerChar) {
-          newPassword += char.toLowerCase();
-        } else if (upperChar) {
-          newPassword += char.toUpperCase();
-        } else {
-          newPassword += char;
-        }
-      }
+      // check lower upper
+      newPassword += checkUpperLower(char, lowerChar, upperChar);
     }
   }
-
   return newPassword;
+}
+
+function checkUpperLower(char, lower, upper) {
+  if (lower && upper) {
+    return char;
+  } else if (upper) {
+    return char.toUpperCase();
+  } else {
+    return char.toLowerCase();
+  }
 }
 
 // Add event listener to generate button
