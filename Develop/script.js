@@ -13,7 +13,10 @@ function generatePassword() {
   const passwordCharsAll =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}\\|;:'\",.<>/?";
 
-  const charsOnly = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const charsUpperLower =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const charsUpperOnly = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const charsLowerOnly = "abcdefghijklmnopqrstuvwxyz";
 
   const noNumbers =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-_=+[]{}\\|;:'\",.<>/?";
@@ -35,59 +38,61 @@ function generatePassword() {
     );
   }
 
-  // Click OK to confirm including special characters. ✅
+// !::::::::::: USER PROMPTS :::::::::::::
+  
   const specialChar = confirm(
     "Click OK to confirm including special characters."
   );
-
-  // Click OK to confirm including numeric characters. ✅
   const numChar = confirm("Click OK to confirm including numeric characters.");
-
-  // Click OK to confirm including lowercase characters. ✅
   const lowerChar = confirm("Click OK to confirm including lower characters.");
-
-  // Click OK to confirm including uppercase characters. ✅
   const upperChar = confirm("Click OK to confirm including upper characters.");
+  
+  // !::::::: IF USER WANTS SPECIAL CHAR AND NUMBERS ::::::
 
   if (specialChar || numChar) {
-    if (specialChar) {
+    if (specialChar && numChar) {
       for (let i = 0; i < pwLength; i++) {
-        const char = noNumbers[Math.floor(Math.random() * noNumbers.length)];
-        if (lowerChar) {
-          newPassword += char.toLowerCase();
+        // get a random character
+        const char =
+          passwordCharsAll[Math.floor(Math.random() * passwordCharsAll.length)];
+        // 
+        if (lowerChar && upperChar) {
+          newPassword += char;
         } else if (upperChar) {
           newPassword += char.toUpperCase();
         } else {
+          newPassword += char.toLowerCase();
+        }
+      }
+    } else if (specialChar) {
+      for (let i = 0; i < pwLength; i++) {
+        const char = noNumbers[Math.floor(Math.random() * noNumbers.length)];
+        if (lowerChar && upperChar) {
           newPassword += char;
+        } else if (upperChar) {
+          newPassword += char.toUpperCase();
+        } else {
+          newPassword += char.toLowerCase();
         }
       }
     } else if (numChar) {
       for (let i = 0; i < pwLength; i++) {
         const char =
           noSpecialChar[Math.floor(Math.random() * noSpecialChar.length)];
-        if (lowerChar) {
-          newPassword += char.toLowerCase();
-        } else if (upperChar) {
-          newPassword += char.toUpperCase();
-        }
-      }
-    } else if (specialChar && numChar) {
-      for (let i = 0; i < pwLength; i++) {
-        const char =
-          passwordCharsAll[Math.floor(Math.random() * passwordCharsAll.length)];
-        if (lowerChar) {
-          newPassword += char.toLowerCase();
+        if (lowerChar && upperChar) {
+          newPassword += char;
         } else if (upperChar) {
           newPassword += char.toUpperCase();
         } else {
-          newPassword += char;
+          newPassword += char.toLowerCase();
         }
       }
     }
+    // !::::::: IF USER DON'T WANT SPECIAL CHAR AND NUMBERS ::::::
   } else {
-      for (let i = 0; i < pwLength; i++) {
-        const char =
-          charsOnly[Math.floor(Math.random() * charsOnly.length)];
+    for (let i = 0; i < pwLength; i++) {
+      const char = charsOnly[Math.floor(Math.random() * charsOnly.length)];
+      if (lowerChar || upperChar) {
         if (lowerChar) {
           newPassword += char.toLowerCase();
         } else if (upperChar) {
@@ -97,10 +102,7 @@ function generatePassword() {
         }
       }
     }
-
-  console.log(
-    `pl: ${pwLength}, xc: ${specialChar}, nc: ${numChar}, lc: ${lowerChar}, uc: ${upperChar}`
-  );
+  }
 
   return newPassword;
 }
