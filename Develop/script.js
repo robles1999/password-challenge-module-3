@@ -10,8 +10,17 @@ function writePassword() {
 }
 
 function generatePassword() {
-  const passwordChars =
+  const passwordCharsAll =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}\\|;:'\",.<>/?";
+
+  const charsOnly = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  const noNumbers =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-_=+[]{}\\|;:'\",.<>/?";
+
+  const noSpecialChar =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
   let newPassword = "";
 
   // How many characters would you like your password to contain? ✅
@@ -40,34 +49,60 @@ function generatePassword() {
   // Click OK to confirm including uppercase characters. ✅
   const upperChar = confirm("Click OK to confirm including upper characters.");
 
-  if (specialChar && numChar && lowerChar && upperChar) {
-    for (let i = 0; i < pwLength; i++) {
-      newPassword +=
-        passwordChars[Math.floor(Math.random() * passwordChars.length)];
-    }
-  } else if (specialChar && numChar && lowerChar) {
-    for (let i = 0; i < pwLength; i++) {
-      newPassword +=
-        passwordChars[
-          Math.floor(Math.random() * passwordChars.length)
-        ].toLowerCase();
-    }
-  } else if (specialChar && numChar) {
-        for (let i = 0; i < pwLength; i++) {
-          newPassword +=
-            passwordChars[
-              Math.floor(Math.random() * passwordChars.length)
-            ].toLowerCase();
+  if (specialChar || numChar) {
+    if (specialChar) {
+      for (let i = 0; i < pwLength; i++) {
+        const char = noNumbers[Math.floor(Math.random() * noNumbers.length)];
+        if (lowerChar) {
+          newPassword += char.toLowerCase();
+        } else if (upperChar) {
+          newPassword += char.toUpperCase();
+        } else {
+          newPassword += char;
         }
-  }
+      }
+    } else if (numChar) {
+      for (let i = 0; i < pwLength; i++) {
+        const char =
+          noSpecialChar[Math.floor(Math.random() * noSpecialChar.length)];
+        if (lowerChar) {
+          newPassword += char.toLowerCase();
+        } else if (upperChar) {
+          newPassword += char.toUpperCase();
+        }
+      }
+    } else if (specialChar && numChar) {
+      for (let i = 0; i < pwLength; i++) {
+        const char =
+          passwordCharsAll[Math.floor(Math.random() * passwordCharsAll.length)];
+        if (lowerChar) {
+          newPassword += char.toLowerCase();
+        } else if (upperChar) {
+          newPassword += char.toUpperCase();
+        } else {
+          newPassword += char;
+        }
+      }
+    }
+  } else {
+      for (let i = 0; i < pwLength; i++) {
+        const char =
+          charsOnly[Math.floor(Math.random() * charsOnly.length)];
+        if (lowerChar) {
+          newPassword += char.toLowerCase();
+        } else if (upperChar) {
+          newPassword += char.toUpperCase();
+        } else {
+          newPassword += char;
+        }
+      }
+    }
 
   console.log(
     `pl: ${pwLength}, xc: ${specialChar}, nc: ${numChar}, lc: ${lowerChar}, uc: ${upperChar}`
   );
 
   return newPassword;
-
-  // return newPassword;
 }
 
 // Add event listener to generate button
