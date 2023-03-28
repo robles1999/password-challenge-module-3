@@ -59,11 +59,19 @@ function generatePassword() {
   if (specialChar || numChar) {
     if (specialChar && numChar) {
       for (let i = 0; i < pwLength; i++) {
-        console.log(specialChar, numChar, upperChar, lowerChar);
-        characters = charsOnly + numbers + spChar;
-        // get a random character
-        const char = characters[Math.floor(Math.random() * characters.length)];
-        newPassword += checkUpperLower(char, lowerChar, upperChar);
+        if (!upperChar && !lowerChar) {
+          characters = spChar + numChar;
+          const char =
+            characters[Math.floor(Math.random() * characters.length)];
+          newPassword += char;
+        } else {
+          console.log(specialChar, numChar, upperChar, lowerChar);
+          characters = charsOnly + numbers + spChar;
+          // get a random character
+          const char =
+            characters[Math.floor(Math.random() * characters.length)];
+          newPassword += checkUpperLower(char, lowerChar, upperChar);
+        }
       }
     } else if (specialChar) {
       for (let i = 0; i < pwLength; i++) {
