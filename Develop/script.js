@@ -11,11 +11,15 @@ function writePassword() {
   passwordText.value = password;
 }
 
+
+// Generate a password with specified criteria
 function generatePassword() {
   let newPassword = "";
 
   // !::::::::::: USER PROMPTS :::::::::::::
   let pwLength;
+  let string = "";
+  let types = {};
 
   function askPwLength() {
     let length = prompt(
@@ -38,98 +42,45 @@ function generatePassword() {
   // How many characters would you like your password to contain? ✅
   pwLength = askPwLength();
 
-  const specialChar = confirm(
-    "Click OK to confirm including special characters."
-  );
-  const numChar = confirm("Click OK to confirm including numeric characters.");
-  const lowerChar = confirm("Click OK to confirm including lower characters.");
-  const upperChar = confirm("Click OK to confirm including upper characters.");
+  const charTypes = {
+    lower: "abcdefghijklmnopqrstuvwxyz",
+    upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    numeric: "0123456789",
+    special: "!@#$%^&*()-=+[]{}\\|;:'\",.<>/?",
+  };
 
-  if (!specialChar && !numChar && !lowerChar && !upperChar) {
-    alert("You must select at least one character type.");
-    writePassword();
-  }
-
-  // !::::::: IF USER WANTS SPECIAL CHAR AND NUMBERS ::::::
-  const charsOnly = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const numbers = "0123456789";
-  const spChar = "!@#$%^&*()-_=+[]{}\\|;:'\",.<>/?";
-  let characters = "";
-
-  if (specialChar || numChar) {
-    if (specialChar && numChar) {
-      for (let i = 0; i < pwLength; i++) {
-        if (!upperChar && !lowerChar) {
-          characters = spChar + numChar;
-          const char =
-            characters[Math.floor(Math.random() * characters.length)];
-          newPassword += char;
-        } else {
-          console.log(specialChar, numChar, upperChar, lowerChar);
-          characters = charsOnly + numbers + spChar;
-          // get a random character
-          const char =
-            characters[Math.floor(Math.random() * characters.length)];
-          newPassword += checkUpperLower(char, lowerChar, upperChar);
-        }
-      }
-    } else if (specialChar) {
-      for (let i = 0; i < pwLength; i++) {
-        // special characters only
-        if (!upperChar && !lowerChar) {
-          characters = spChar;
-          const char =
-            characters[Math.floor(Math.random() * characters.length)];
-          newPassword += char;
-        } else {
-          // special characters and letters
-          characters = charsOnly + spChar;
-          const char =
-            characters[Math.floor(Math.random() * characters.length)];
-          // check lower upper
-          newPassword += checkUpperLower(char, lowerChar, upperChar);
-        }
-      }
-    } else if (numChar) {
-      // only numbers
-      if (!upperChar && !lowerChar) {
-        for (let i = 0; i < pwLength; i++) {
-          console.log("made upper lower if of numbChar");
-          characters = numbers;
-          const char =
-            characters[Math.floor(Math.random() * characters.length)];
-          newPassword += char;
-        }
-      } else {
-        // numbers and letters
-        characters = charsOnly + numbers;
-        for (let i = 0; i < pwLength; i++) {
-          const char =
-            characters[Math.floor(Math.random() * characters.length)];
-          // check lower upper
-          newPassword += checkUpperLower(char, lowerChar, upperChar);
-        }
-      }
-    }
-    // !::::::: IF USER DON'T WANT SPECIAL CHAR AND NUMBERS ::::::
-  } else if (upperChar || lowerChar) {
-    for (let i = 0; i < pwLength; i++) {
-      const char = charsOnly[Math.floor(Math.random() * charsOnly.length)];
-      // check lower upper
-      newPassword += checkUpperLower(char, lowerChar, upperChar);
+  for (let type in charTypes) {
+    if (confirm(`Click OK to confirm including ${type} characters.`)) {
+      string += charTypes[type];
+      types[type] = true;
     }
   }
+  // Object.keys returns the object keys if there
+  // check if at least one character type is selected
+  if (Object.keys(types).length === 0) {
+    alert("Please select at least one character type.");
+    generatePassword();
+    return;
+  }
+
+  // !::::::::::: GENERATE PASSWORD :::::::::::::
+  for (let i = 0; i < pwLength; i++) {
+    newPassword += string.charAt(Math.floor(Math.random() * string.length));
+  }
+
+  // check if the password includes the required character types
+  if (
+    types.lower &&
+    !/[a-z]/.test(newPassword) &&
+    /[A-Z]/.test(newPassword) &&
+    /\d/.test(newPassword) &&
+    /[\W_]/.test(newPassword)
+  ) {
+    newPassword =
+      newPassword.slice(0, 1) + "a" + newPassword.slice(1, pwLength - 3);
+  }
+
   return newPassword;
-}
-
-function checkUpperLower(char, lower, upper) {
-  if (lower && upper) {
-    return char;
-  } else if (upper) {
-    return char.toUpperCase();
-  } else {
-    return char.toLowerCase();
-  }
 }
 
 // Add event listener to generate button
