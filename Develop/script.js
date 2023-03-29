@@ -11,7 +11,6 @@ function writePassword() {
   passwordText.value = password;
 }
 
-
 // Generate a password with specified criteria
 function generatePassword() {
   let newPassword = "";
@@ -20,6 +19,9 @@ function generatePassword() {
   let pwLength;
   let string = "";
   let types = {};
+
+  // How many characters would you like your password to contain? ✅
+  askPwLength();
 
   function askPwLength() {
     let length = prompt(
@@ -34,13 +36,11 @@ function generatePassword() {
   function checkLength(length) {
     if (length < 8 || length > 128) {
       alert(`Password length must be between 8 and 128 characters long.`);
-      askPwLength();
+      pwLength = askPwLength();
+    } else {
+      pwLength = length;
     }
-    return;
   }
-
-  // How many characters would you like your password to contain? ✅
-  pwLength = askPwLength();
 
   const charTypes = {
     lower: "abcdefghijklmnopqrstuvwxyz",
@@ -49,18 +49,19 @@ function generatePassword() {
     special: "!@#$%^&*()-=+[]{}\\|;:'\",.<>/?",
   };
 
+  // loop through each item in the charTypes and use
+  // the keys object keys to prompt the user
   for (let type in charTypes) {
     if (confirm(`Click OK to confirm including ${type} characters.`)) {
       string += charTypes[type];
       types[type] = true;
     }
   }
-  // Object.keys returns the object keys if there
+  // Object.keys returns the object which we can then check the length
   // check if at least one character type is selected
   if (Object.keys(types).length === 0) {
     alert("Please select at least one character type.");
-    generatePassword();
-    return;
+    return generatePassword();
   }
 
   // !::::::::::: GENERATE PASSWORD :::::::::::::
@@ -70,14 +71,12 @@ function generatePassword() {
 
   // check if the password includes the required character types
   if (
-    types.lower &&
-    !/[a-z]/.test(newPassword) &&
-    /[A-Z]/.test(newPassword) &&
-    /\d/.test(newPassword) &&
-    /[\W_]/.test(newPassword)
+    (types.numeric && !/[0-9]/.test(newPassword)) ||
+    (types.lower && !/[a-z]/.test(newPassword)) ||
+    (types.upper && !/[A-Z]/.test(newPassword)) ||
+    (types.special && !/[\W_]/.test(newPassword))
   ) {
-    newPassword =
-      newPassword.slice(0, 1) + "a" + newPassword.slice(1, pwLength - 3);
+    return generatePassword();
   }
 
   return newPassword;
