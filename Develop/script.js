@@ -70,6 +70,18 @@ function generatePassword() {
   }
 
   // check if the password includes the required character types
+  // if (
+  //   (types.numeric && !newPassword.includes(charTypes.numeric)) ||
+  //   (types.lower && !/[a-z]/.test(newPassword)) ||
+  //   (types.upper && !/[A-Z]/.test(newPassword)) ||
+  //   (types.special && !/[\W_]/.test(newPassword))
+  // ) {
+  //   return generatePassword();
+  // }
+
+
+
+
   if (
     (types.numeric && !/[0-9]/.test(newPassword)) ||
     (types.lower && !/[a-z]/.test(newPassword)) ||
