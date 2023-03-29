@@ -20,7 +20,7 @@ function generatePassword() {
   let string = "";
   let types = {};
 
-  // How many characters would you like your password to contain? ✅
+  // How many characters would you like your password to contain?
   askPwLength();
 
   function askPwLength() {
@@ -50,14 +50,14 @@ function generatePassword() {
   };
 
   // loop through each item in the charTypes and use
-  // the keys object keys to prompt the user
+  // the object keys to prompt the user
   for (let type in charTypes) {
     if (confirm(`Click OK to confirm including ${type} characters.`)) {
       string += charTypes[type];
       types[type] = true;
     }
   }
-  // Object.keys returns the object which we can then check the length
+  // Object.keys returns the object which we can then check the length of
   // check if at least one character type is selected
   if (Object.keys(types).length === 0) {
     alert("Please select at least one character type.");
@@ -70,19 +70,13 @@ function generatePassword() {
   }
 
   // check if the password includes the required character types
-  // if (
-  //   (types.numeric && !newPassword.includes(charTypes.numeric)) ||
-  //   (types.lower && !/[a-z]/.test(newPassword)) ||
-  //   (types.upper && !/[A-Z]/.test(newPassword)) ||
-  //   (types.special && !/[\W_]/.test(newPassword))
-  // ) {
-  //   return generatePassword();
-  // }
-
-
-
-
   if (
+    // the `not` operator will flip a falsy result into
+    // a truthy result, so that both conditions are true if the
+    // generated pw doesn't contain at least one character of the
+    // selected type. This will then make the entire expression
+    // true and the password will be re-generated until the
+    // pw contain at least one char of the selected types.
     (types.numeric && !/[0-9]/.test(newPassword)) ||
     (types.lower && !/[a-z]/.test(newPassword)) ||
     (types.upper && !/[A-Z]/.test(newPassword)) ||
